@@ -7,8 +7,8 @@ with open("requirements.txt", "r") as f:
     INSTALL_REQUIRES = [line.strip() for line in f.readlines()]
 
 setup(
-    name='taxicab-st',
-    version='0.0.1',
+    name='taxicab_st',
+    version='0.0.2',
     author='Nathan A. Rooy, Raven van Ewijk',
     author_email='nathanrooy@gmail.com, ravenvanewijk1@gmail.com',
     url='https://github.com/ravenvanewijk/taxicab-st',
