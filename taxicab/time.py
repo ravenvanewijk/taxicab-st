@@ -5,11 +5,11 @@ from shapely.geometry import LineString
 from shapely.ops import substring
 
 from osmnx.distance import nearest_edges
-from osmnx.distance import great_circle_vec
-from osmnx.utils_graph import get_route_edge_attributes
+from osmnx.distance import great_circle
+from osmnx.routing import route_to_gdf
 
 
-def compute_linestring_length(ls):
+def compute_linestring_time(ls, def_spd=30, def_unit='mph'):
     '''
     Computes the length of a partial edge (shapely linesting)
     
@@ -21,30 +21,59 @@ def compute_linestring_length(ls):
     -------
     float : partial edge length distance in meters
     '''
-
+    spd = v2ms(def_spd, def_unit)
     if type(ls) == LineString:
         x, y = zip(*ls.coords)
     
-        dist = 0
+        time = 0
         for i in range(0, len(x)-1):
-            dist += great_circle_vec(y[i], x[i], y[i+1], x[i+1])
-        return dist
+            time += great_circle(y[i], x[i], y[i+1], x[i+1]) / spd
+        return time
     else: return None
 
+def v2ms(value, unit):
+    """
+    Convert a value given in mph, kph, or kts to meters per second (m/s).
 
-def compute_taxi_length(G, nx_route, orig_partial_edge, dest_partial_edge):
+    Args:
+    - value (float): The speed value to be converted.
+    - unit (str): The unit of the speed value ('mph', 'kph', 'kts').
+
+    Returns:
+    - float: The speed in meters per second (m/s).
+
+    Raises:
+    - ValueError: If the unit is not one of 'mph', 'kph', 'kts'.
+    """
+    # Conversion factors from the given unit to meters per second
+    conversion_factors = {
+        'mph': 0.44704,  # 1 mile per hour is approximately 0.44704 meters per second
+        'kph': 0.27778,  # 1 kilometer per hour is approximately 0.27778 meters per second
+        'kts': 0.51444   # 1 knot is approximately 0.51444 meters per second
+    }
+
+    # Check if the provided unit is valid
+    if unit not in conversion_factors:
+        raise ValueError("Invalid unit. Please use 'mph', 'kph', or 'kts'.")
+
+    # Convert the value to meters per second
+    speed_ms = value * conversion_factors[unit]
+    return speed_ms
+
+
+def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
     '''
     Computes the route complete taxi route length
     '''
 
-    dist = 0
+    time = 0
     if nx_route:
-        dist += sum(get_route_edge_attributes(G, nx_route, 'length'))
+        time += sum(route_to_gdf(G, nx_route)['travel_time'])
     if orig_partial_edge:
-        dist += compute_linestring_length(orig_partial_edge)
+        time += compute_linestring_time(orig_partial_edge)
     if dest_partial_edge:
-        dist += compute_linestring_length(dest_partial_edge)
-    return dist
+        time += compute_linestring_time(dest_partial_edge)
+    return time
 
 
 def get_edge_geometry(G, edge):
@@ -117,7 +146,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
     
     # routing across multiple edges
     else:
-        nx_route = nx_shortest_path(G, orig_edge[0], dest_edge[0], 'length')
+        nx_route = nx_shortest_path(G, orig_edge[0], dest_edge[0], 'travel_time')
         p_o, p_d = Point(orig_yx[::-1]), Point(dest_yx[::-1])
         orig_geo = get_edge_geometry(G, orig_edge)
         dest_geo = get_edge_geometry(G, dest_edge)
@@ -189,6 +218,6 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             dest_partial_edge = []
 
     # compute total path length
-    route_dist = compute_taxi_length(G, nx_route, orig_partial_edge, dest_partial_edge)
+    route_dist = compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge)
 
     return route_dist, nx_route, orig_partial_edge, dest_partial_edge
