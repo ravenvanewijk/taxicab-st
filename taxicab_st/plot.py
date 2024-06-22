@@ -3,9 +3,9 @@ from osmnx.plot import plot_graph
 
 from shapely.geometry import LineString
 
-from taxicab.constants import BODY
-from taxicab.constants import ORIG_PARTIAL_EDGE
-from taxicab.constants import DEST_PARTIAL_EDGE
+from taxicab_st.constants import BODY
+from taxicab_st.constants import ORIG_PARTIAL_EDGE
+from taxicab_st.constants import DEST_PARTIAL_EDGE
 
 def plot_graph_route(
     G,

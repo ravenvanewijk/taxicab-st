@@ -8,7 +8,7 @@ THIS_DIR = os.path.dirname(os.path.abspath(__file__))
 PARENT_DIR = os.path.dirname(THIS_DIR)
 sys.path.insert(0, PARENT_DIR)
 
-import taxicab as ts
+import taxicab_st as ts
 
 NETWORK_PATH = os.path.join(THIS_DIR, 'data/test_graph.osm')
 
