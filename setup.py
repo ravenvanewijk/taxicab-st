@@ -1,5 +1,4 @@
 from setuptools import setup, find_packages
-import taxicab as ts
 
 with open("README.md", "r") as f:
     long_description = f.read()
@@ -9,8 +8,8 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name='taxicab-st',
-    version=ts.__version__,
-    author=ts.__author__,
+    version='0.0.1',
+    author='Nathan A. Rooy, Raven van Ewijk',
     author_email='nathanrooy@gmail.com, ravenvanewijk1@gmail.com',
     url='https://github.com/ravenvanewijk/taxicab-st',
     description='Accurate time based routing for Open Street Maps and OSMnx',
