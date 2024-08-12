@@ -8,6 +8,7 @@ from osmnx.distance import nearest_edges
 from osmnx.distance import great_circle
 from osmnx.routing import route_to_gdf
 
+from math import dist
 
 def compute_linestring_time(ls, def_spd=30, def_unit='mph'):
     '''
@@ -166,18 +167,45 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                 orig_partial_edge = orig_partial_edge_1
                 dest_partial_edge = dest_partial_edge_1
                 
-            if orig_partial_edge_1.intersects(dest_partial_edge_2):
+            elif orig_partial_edge_1.intersects(dest_partial_edge_2):
                 orig_partial_edge = orig_partial_edge_1
                 dest_partial_edge = dest_partial_edge_2
                 
-            if orig_partial_edge_2.intersects(dest_partial_edge_1):
+            elif orig_partial_edge_2.intersects(dest_partial_edge_1):
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_1
                 
-            if orig_partial_edge_2.intersects(dest_partial_edge_2):
+            elif orig_partial_edge_2.intersects(dest_partial_edge_2):
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_2
             
+            # nx route has apparantly not selected all correct nodes
+            # append the route such that there are 3 nodes
+            else: 
+                nx_route = nx_shortest_path(G, orig_edge[0], dest_edge[0], 'travel_time')
+                missed_orig_node, orig_node = (orig_edge[0], orig_edge[1]) \
+                                    if orig_edge[1] in nx_route else \
+                                            (orig_edge[1], orig_edge[0])
+                missed_dest_node, dest_node = (dest_edge[0], dest_edge[1]) \
+                                    if dest_edge[1] in nx_route else \
+                                            (dest_edge[1], dest_edge[0])
+
+                orig_dist_error = dist(orig_yx, (G.nodes[missed_orig_node]['y'],
+                                        G.nodes[missed_orig_node]['x'])) - \
+                                    dist(orig_yx, (G.nodes[orig_node]['y'],
+                                        G.nodes[orig_node]['x']))
+                                    
+                dest_dist_error = dist(dest_yx, (G.nodes[missed_dest_node]['y'],
+                                        G.nodes[missed_dest_node]['x'])) - \
+                                    dist(dest_yx, (G.nodes[dest_node]['y'],
+                                        G.nodes[dest_node]['x']))
+
+                if orig_dist_error <= dest_dist_error:
+                    nx_route = [missed_orig_node] + nx_route
+
+                elif dest_dist_error < orig_dist_error:
+                    nx_route = nx_route + [missed_dest_node]            
+
         # when routing across two or more edges
         if len(nx_route) >= 3:
 
@@ -210,12 +238,19 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                 dest_partial_edge = dest_partial_edge_2
             
     # final check
-    if orig_partial_edge:
-        if len(orig_partial_edge.coords) <= 1:
-            orig_partial_edge = []
-    if dest_partial_edge:
-        if len(dest_partial_edge.coords) <= 1:
-            dest_partial_edge = []
+    try:
+        if orig_partial_edge:
+            if len(orig_partial_edge.coords) <= 1:
+                orig_partial_edge = []
+    except UnboundLocalError:
+        orig_partial_edge = []
+
+    try:
+        if dest_partial_edge:
+            if len(dest_partial_edge.coords) <= 1:
+                dest_partial_edge = []
+    except UnboundLocalError:
+        dest_partial_edge = []
 
     # compute total path length
     route_dist = compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge)
