@@ -48,9 +48,9 @@ def v2ms(value, unit):
     """
     # Conversion factors from the given unit to meters per second
     conversion_factors = {
-        'mph': 0.44704,  # 1 mile per hour is approximately 0.44704 meters per second
-        'kph': 0.27778,  # 1 kilometer per hour is approximately 0.27778 meters per second
-        'kts': 0.51444   # 1 knot is approximately 0.51444 meters per second
+        'mph': 0.44704,  
+        'kph': 0.27778,
+        'kts': 0.51444
     }
 
     # Check if the provided unit is valid
@@ -61,20 +61,33 @@ def v2ms(value, unit):
     speed_ms = value * conversion_factors[unit]
     return speed_ms
 
+def count_coordinates(geometry):
+    return len(list(geometry.coords))
 
 def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
     '''
     Computes the route complete taxi route length
     '''
-
-    time = 0
+    timelst = []
     if nx_route:
-        time += sum(route_to_gdf(G, nx_route)['travel_time'])
+        gdf = route_to_gdf(G, nx_route)
+        # Apply the function to each row in the GeoDataFrame
+        gdf['num_coordinates'] = gdf['geometry'].apply(count_coordinates)
+        gdf['travel_time_per_segment'] = gdf['travel_time'] / \
+                                        (gdf['num_coordinates'] - 1)
+        for idx, row in gdf.iterrows():
+        # Append the travel time per segment (num_coordinates - 1) times
+            timelst.extend([row['travel_time_per_segment']] * \
+                            (row['num_coordinates'] - 1))
     if orig_partial_edge:
-        time += compute_linestring_time(orig_partial_edge)
+        timelst = [float(compute_linestring_time(orig_partial_edge))] * \
+                    (len(orig_partial_edge.xy) - 1) + timelst
     if dest_partial_edge:
-        time += compute_linestring_time(dest_partial_edge)
-    return time
+        timelst = timelst + \
+                [float(compute_linestring_time(dest_partial_edge))] * \
+                    (len(dest_partial_edge.xy) - 1)
+    total_time = sum(timelst)
+    return total_time, timelst
 
 
 def get_edge_geometry(G, edge):
@@ -141,13 +154,15 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         edge_geo = G.edges[orig_edge]['geometry']
         orig_clip = edge_geo.project(p_o, normalized=True)
         dest_clip = edge_geo.project(p_d, normalized=True)
-        orig_partial_edge = substring(edge_geo, orig_clip, dest_clip, normalized=True)  
+        orig_partial_edge = substring(edge_geo, orig_clip, dest_clip, 
+                                                    normalized=True)  
         dest_partial_edge = []
         nx_route = []
     
     # routing across multiple edges
     else:
-        nx_route = nx_shortest_path(G, orig_edge[0], dest_edge[0], 'travel_time')
+        nx_route = nx_shortest_path(G, orig_edge[0], 
+                                    dest_edge[0], 'travel_time')
         p_o, p_d = Point(orig_yx[::-1]), Point(dest_yx[::-1])
         orig_geo = get_edge_geometry(G, orig_edge)
         dest_geo = get_edge_geometry(G, dest_edge)
@@ -182,7 +197,8 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # nx route has apparantly not selected all correct nodes
             # append the route such that there are 3 nodes
             else: 
-                nx_route = nx_shortest_path(G, orig_edge[0], dest_edge[0], 'travel_time')
+                nx_route = nx_shortest_path(G, orig_edge[0], 
+                                            dest_edge[0], 'travel_time')
                 missed_orig_node, orig_node = (orig_edge[0], orig_edge[1]) \
                                     if orig_edge[1] in nx_route else \
                                             (orig_edge[1], orig_edge[0])
@@ -212,12 +228,15 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             ### resolve origin
 
             # check overlap with first route edge
-            route_orig_edge = get_edge_geometry(G, (nx_route[0], nx_route[1], 0))
-            if route_orig_edge.intersects(orig_partial_edge_1) and route_orig_edge.intersects(orig_partial_edge_2):
+            route_orig_edge = get_edge_geometry(G, (nx_route[0], 
+                                                nx_route[1], 0))
+            if route_orig_edge.intersects(orig_partial_edge_1) and \
+                            route_orig_edge.intersects(orig_partial_edge_2):
                 nx_route = nx_route[1:]
         
             # determine which origin partial edge to use
-            route_orig_edge = get_edge_geometry(G, (nx_route[0], nx_route[1], 0)) 
+            route_orig_edge = get_edge_geometry(G, (nx_route[0], 
+                                                nx_route[1], 0)) 
             if route_orig_edge.intersects(orig_partial_edge_1):
                 orig_partial_edge = orig_partial_edge_1
             else:
@@ -226,12 +245,15 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             ### resolve destination
 
             # check overlap with last route edge
-            route_dest_edge = get_edge_geometry(G, (nx_route[-2], nx_route[-1], 0))
-            if route_dest_edge.intersects(dest_partial_edge_1) and route_dest_edge.intersects(dest_partial_edge_2):
+            route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
+                                                nx_route[-1], 0))
+            if route_dest_edge.intersects(dest_partial_edge_1) and \
+                            route_dest_edge.intersects(dest_partial_edge_2):
                 nx_route = nx_route[:-1]
 
             # determine which destination partial edge to use
-            route_dest_edge = get_edge_geometry(G, (nx_route[-2], nx_route[-1], 0)) 
+            route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
+                                                nx_route[-1], 0)) 
             if route_dest_edge.intersects(dest_partial_edge_1):
                 dest_partial_edge = dest_partial_edge_1
             else:
@@ -253,6 +275,8 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         dest_partial_edge = []
 
     # compute total path length
-    route_dist = compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge)
+    route_time, segment_time = compute_taxi_time(G, nx_route, 
+                                        orig_partial_edge, dest_partial_edge)
 
-    return route_dist, nx_route, orig_partial_edge, dest_partial_edge
+    return route_time, nx_route, orig_partial_edge, \
+                                dest_partial_edge, segment_time
