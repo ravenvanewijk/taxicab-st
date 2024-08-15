@@ -68,7 +68,7 @@ def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
     '''
     Computes the route complete taxi route length
     '''
-    timelst = []
+    timelst = [0]
     if nx_route:
         gdf = route_to_gdf(G, nx_route)
         # Apply the function to each row in the GeoDataFrame
