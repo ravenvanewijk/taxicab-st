@@ -71,21 +71,22 @@ def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
     timelst = []
     if nx_route:
         gdf = route_to_gdf(G, nx_route)
-        # Apply the function to each row in the GeoDataFrame
-        gdf['num_coordinates'] = gdf['geometry'].apply(count_coordinates)
+        # Calculate the number of coordinates and travel time per segment
+        # Travel time is assumed linear
+        gdf['num_coordinates'] = gdf['geometry'].apply(lambda geom: len(list(geom.coords)) if geom else 2)
         gdf['travel_time_per_segment'] = gdf['travel_time'] / \
                                         (gdf['num_coordinates'] - 1)
         for idx, row in gdf.iterrows():
-        # Append the travel time per segment (num_coordinates - 1) times
+            # Append the travel time per segment (num_coordinates - 1) times
             timelst.extend([row['travel_time_per_segment']] * \
                             (row['num_coordinates'] - 1))
     if orig_partial_edge:
         timelst = [float(compute_linestring_time(orig_partial_edge))] * \
-                    (len(orig_partial_edge.xy) - 1) + timelst
+                    (len(orig_partial_edge.coords) - 1) + timelst
     if dest_partial_edge:
         timelst = timelst + \
                 [float(compute_linestring_time(dest_partial_edge))] * \
-                    (len(dest_partial_edge.xy) - 1)
+                    (len(dest_partial_edge.coords) - 1)
     timelst = [0] + timelst
     total_time = sum(timelst)
     return total_time, timelst
