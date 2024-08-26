@@ -172,11 +172,17 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         orig_clip = orig_geo.project(p_o, normalized=True)
         dest_clip = dest_geo.project(p_d, normalized=True)
 
+        # Adjust for floating point errors
+        if orig_clip < 1e-10:
+            orig_clip = 0
+        if dest_clip < 1e-10:
+            dest_clip = 0 
+
         orig_partial_edge_1 = substring(orig_geo, orig_clip, 1, normalized=True)
         orig_partial_edge_2 = substring(orig_geo, 0, orig_clip, normalized=True)
         dest_partial_edge_1 = substring(dest_geo, dest_clip, 1, normalized=True)
         dest_partial_edge_2 = substring(dest_geo, 0, dest_clip, normalized=True)        
-        
+            
         # when the nx route is just a single node, this is a bit of an edge case
         if len(nx_route) <= 2:
             nx_route = []
@@ -249,14 +255,20 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # check overlap with last route edge
             route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
                                                 nx_route[-1], 0))
-            if route_dest_edge.intersects(dest_partial_edge_1) and \
-                            route_dest_edge.intersects(dest_partial_edge_2):
+            if (route_dest_edge.intersects(dest_partial_edge_1) and not
+                type(dest_partial_edge_1) == Point) and \
+                (route_dest_edge.intersects(dest_partial_edge_2) and not
+                type(dest_partial_edge_2) == Point):
                 nx_route = nx_route[:-1]
 
-            # determine which destination partial edge to use
-            route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
-                                                nx_route[-1], 0)) 
-            if route_dest_edge.intersects(dest_partial_edge_1):
+            if len(nx_route) > 1:
+                # determine which destination partial edge to use
+                route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
+                                                    nx_route[-1], 0))
+            else:
+                nx_route = []
+            if route_dest_edge.intersects(dest_partial_edge_1) and not \
+                type(dest_partial_edge_1) == Point:
                 dest_partial_edge = dest_partial_edge_1
             else:
                 dest_partial_edge = dest_partial_edge_2
