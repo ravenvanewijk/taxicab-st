@@ -272,10 +272,8 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # check overlap with last route edge
             route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
                                                 nx_route[-1], 0))
-            if (route_dest_edge.intersects(dest_partial_edge_1) and not
-                type(dest_partial_edge_1) == Point) and \
-                (route_dest_edge.intersects(dest_partial_edge_2) and not
-                type(dest_partial_edge_2) == Point):
+            if route_dest_edge.intersects(dest_partial_edge_1) and \
+                route_dest_edge.intersects(dest_partial_edge_2):
                 nx_route = nx_route[:-1]
 
             if len(nx_route) > 1:

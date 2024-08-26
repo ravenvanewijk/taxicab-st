@@ -1,3 +1,5 @@
+
+
 import osmnx as ox
 import numpy as np
 import matplotlib.pyplot as plt
@@ -51,6 +53,10 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 
 A = (G.nodes[7779745399]['y'], G.nodes[7779745399]['x'])
 B = (G.nodes[820000923]['y'], G.nodes[820000923]['x'])
+
+
+A = np.array([42.87057098882533, -78.7324669405705])
+B = np.array([42.87571, -78.731316])
 # 1052605684
 
 # A = np.array([42.876466914460224, -78.78590820757644])
