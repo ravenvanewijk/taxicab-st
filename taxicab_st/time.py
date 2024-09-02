@@ -8,6 +8,8 @@ from osmnx.distance import nearest_edges
 from osmnx.distance import great_circle
 from osmnx.routing import route_to_gdf
 
+from numpy import isclose
+
 from math import dist
 
 def compute_linestring_time(ls, def_spd=30, def_unit='mph'):
@@ -180,25 +182,25 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         # If any of these are a line with equal coords, convert to point
         # Will resul in an error if we do not do this     
         try:
-            if all(np.isclose(orig_partial_edge_1.coords[0], 
+            if all(isclose(orig_partial_edge_1.coords[0], 
                                             orig_partial_edge_1.coords[1])): 
                 orig_partial_edge_1 = Point(orig_partial_edge_1.coords[0])
         except IndexError:
             pass
         try:
-            if all(np.isclose(orig_partial_edge_2.coords[0], 
+            if all(isclose(orig_partial_edge_2.coords[0], 
                                             orig_partial_edge_2.coords[1])): 
                 orig_partial_edge_2 = Point(orig_partial_edge_2.coords[0])
         except IndexError:
             pass
         try:
-            if all(np.isclose(dest_partial_edge_1.coords[0], 
+            if all(isclose(dest_partial_edge_1.coords[0], 
                                             dest_partial_edge_1.coords[1])): 
                 dest_partial_edge_1 = Point(dest_partial_edge_1.coords[0])
         except IndexError:
             pass        
         try:
-            if all(np.isclose(dest_partial_edge_2.coords[0], 
+            if all(isclose(dest_partial_edge_2.coords[0], 
                                             dest_partial_edge_2.coords[1])): 
                 dest_partial_edge_2 = Point(dest_partial_edge_2.coords[0])
         except IndexError:
