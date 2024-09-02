@@ -315,25 +315,3 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
 
     return route_time, nx_route, orig_partial_edge, \
                                 dest_partial_edge, segment_time
-
-
-
-import osmnx as ox
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from shapely import Point
-
-def str_interpret(value):
-    return value  # Ensure the value remains a string
-
-G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
-                        edge_dtypes={'osmid': str_interpret,
-                                    'reversed': str_interpret})
-
-
-A = np.array([42.92501225588005, -78.75414679343362])
-B = np.array([42.927084699999995, -78.7541457])
-
-
-q,w,e,r,t= shortest_path(G,A,B)
