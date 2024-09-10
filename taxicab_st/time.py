@@ -176,7 +176,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         orig_partial_edge_2 = substring(orig_geo, 0, orig_clip, normalized=True)
         dest_partial_edge_1 = substring(dest_geo, dest_clip, 1, normalized=True)
         dest_partial_edge_2 = substring(dest_geo, 0, dest_clip, normalized=True)   
-
+        # plot_graph(G,lines=[orig_partial_edge_1,orig_partial_edge_2, dest_partial_edge_1,dest_partial_edge_2])
         # If any of these are a line with equal coords, convert to point
         # Will resul in an error if we do not do this     
         try:
@@ -255,14 +255,18 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # check overlap with first route edge
             route_orig_edge = get_edge_geometry(G, (nx_route[0], 
                                                 nx_route[1], 0))
-            if route_orig_edge.intersects(orig_partial_edge_1) and \
-                            route_orig_edge.intersects(orig_partial_edge_2):
+            if orig_edge[0] in nx_route and orig_edge[1] in nx_route:
                 nx_route = nx_route[1:]
         
             # determine which origin partial edge to use
             route_orig_edge = get_edge_geometry(G, (nx_route[0], 
                                                 nx_route[1], 0)) 
-            if route_orig_edge.intersects(orig_partial_edge_1):
+            # We need to check if end or begin point of partial edge matches to
+            # beginning or end of original edge
+            if orig_partial_edge_1.coords[0] == route_orig_edge.coords[0] \
+                or orig_partial_edge_1.coords[1] == route_orig_edge.coords[0] \
+                or orig_partial_edge_1.coords[0] == route_orig_edge.coords[1] \
+                or orig_partial_edge_1.coords[1] == route_orig_edge.coords[1]:
                 orig_partial_edge = orig_partial_edge_1
             else:
                 orig_partial_edge = orig_partial_edge_2
@@ -272,8 +276,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # check overlap with last route edge
             route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
                                                 nx_route[-1], 0))
-            if route_dest_edge.intersects(dest_partial_edge_1) and \
-                route_dest_edge.intersects(dest_partial_edge_2):
+            if dest_edge[0] in nx_route and dest_edge[1] in nx_route:
                 nx_route = nx_route[:-1]
 
             if len(nx_route) > 1:
