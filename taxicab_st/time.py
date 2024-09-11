@@ -261,10 +261,16 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # first linepiece is made of
             # Exception is when it is circular. In that case we want to check
             # for the second node as well, in case that is also the same
-            if (orig_edge in route_to_gdf(G, nx_route) \
-                and not orig_edge[0] == orig_edge[1]) \
-                or \
-                (orig_edge[0] == orig_edge[1] == nx_route[0] == nx_route[1]):
+            nx_edges = list(route_to_gdf(G, nx_route).index)
+
+            orig_edge_in_nx = orig_edge in nx_edges or \
+                (orig_edge[1], orig_edge[0], orig_edge[2]) in nx_edges
+            is_not_self_loop = orig_edge[0] != orig_edge[1]
+            is_start_self_loop = orig_edge[0] == orig_edge[1] == \
+                nx_route[0] == nx_route[1]
+
+            # Combine conditions
+            if (orig_edge_in_nx and is_not_self_loop) or is_start_self_loop:
                 nx_route = nx_route[1:]
         
             # determine which origin partial edge to use
@@ -290,10 +296,16 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # last linepiece is made of
             # Exception is when it is circular. In that case we want to check
             # for the second to last node as well, in case that's also the same
-            if (dest_edge in route_to_gdf(G, nx_route) \
-                and not dest_edge[0] == dest_edge[1]) \
-                or \
-                (dest_edge[0] == dest_edge[1] == nx_route[-1] == nx_route[-2]):
+            nx_edges = list(route_to_gdf(G, nx_route).index)
+            
+            dest_edge_in_nx = dest_edge in nx_edges or \
+                (dest_edge[1], dest_edge[0], dest_edge[2]) in nx_edges
+            is_not_self_loop = dest_edge[0] != dest_edge[1]
+            is_end_self_loop = dest_edge[0] == dest_edge[1] == \
+                nx_route[-1] == nx_route[-2]
+
+            # Combine conditions
+            if (dest_edge_in_nx and is_not_self_loop) or is_end_self_loop:
                 nx_route = nx_route[:-1]
 
             if len(nx_route) > 1:
