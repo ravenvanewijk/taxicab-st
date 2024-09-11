@@ -261,7 +261,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # first linepiece is made of
             # Exception is when it is circular. In that case we want to check
             # for the second node as well, in case that is also the same
-            if (orig_edge[0] in nx_route and orig_edge[1] in nx_route \
+            if (orig_edge in route_to_gdf(G, nx_route) \
                 and not orig_edge[0] == orig_edge[1]) \
                 or \
                 (orig_edge[0] == orig_edge[1] == nx_route[0] == nx_route[1]):
@@ -290,7 +290,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # last linepiece is made of
             # Exception is when it is circular. In that case we want to check
             # for the second to last node as well, in case that's also the same
-            if (dest_edge[0] in nx_route and dest_edge[1] in nx_route \
+            if (dest_edge in route_to_gdf(G, nx_route) \
                 and not dest_edge[0] == dest_edge[1]) \
                 or \
                 (dest_edge[0] == dest_edge[1] == nx_route[-1] == nx_route[-2]):

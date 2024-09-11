@@ -111,24 +111,27 @@ def plot_graph(G, custs=None, lines=[]):
 def str_interpret(value):
     return value  # Ensure the value remains a string
 
-G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
+G = ox.load_graphml(filepath='taxicab_st/Seattle.graphml',
                         edge_dtypes={'osmid': str_interpret,
                                     'reversed': str_interpret})
 
 
-A = np.array([42.948108, -78.762627])
-B = np.array([42.894466, -78.717194])
+
+# A = np.array([47.680838, -122.104114])
+# B = np.array([47.682122, -122.10635])
+B = np.array([47.5665561, -122.3895247])
+A = np.array([47.625187, -122.352789])
 
 # A = np.array([42.88189546413181, -78.74404160878684])
 # B = np.array([42.88198599999998, -78.746419])
-A = np.array([42.87057098882533, -78.7324669405705])
-B = np.array([42.87571, -78.731316])
+# A = np.array([42.87057098882533, -78.7324669405705])
+# B = np.array([42.87571, -78.731316])
 q,w,e,r,t= shortest_path(G,A,B)
 print(w,e,r)
 
 custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
 rte=[]
-nx_route = [111449408, 293625412, 264355109, 264348007, 264353727, 8873551940, 1014110131, 111355100, 443517911, 443517905, 111355080, 443517409, 111355062, 111355060, 111355056, 111355044, 111355042, 111355039, 111355035, 111355033, 111355010, 111355008, 111355003, 111354999, 111354996, 111354978, 111354949, 111354944, 111320785, 111303760, 111320783, 111320781, 111320779, 111320777, 111320775, 111320773, 111320771, 111320769, 111320768, 111320757, 6294556286, 111348878, 111348849, 111520862]
+nx_route = [8649685293, 53143742]
 for ls in route_to_gdf(G, w)['geometry']:
     rte.append(ls)
 # plot_graph(G, custs, [e] + rte)
