@@ -8,7 +8,7 @@ with open("requirements.txt", "r") as f:
 
 setup(
     name='taxicab_st',
-    version='0.1.5',
+    version='0.1.6',
     author='Nathan A. Rooy, Raven van Ewijk',
     author_email='nathanrooy@gmail.com, ravenvanewijk1@gmail.com',
     url='https://github.com/ravenvanewijk/taxicab-st',

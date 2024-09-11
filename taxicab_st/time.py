@@ -262,9 +262,10 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # Exception is when it is circular. In that case we want to check
             # for the second node as well, in case that is also the same
             nx_edges = list(route_to_gdf(G, nx_route).index)
+            nx_edges_uv = {(u, v) for u, v, key in nx_edges}
 
-            orig_edge_in_nx = orig_edge in nx_edges or \
-                (orig_edge[1], orig_edge[0], orig_edge[2]) in nx_edges
+            orig_edge_in_nx = (orig_edge[0], orig_edge[1]) in nx_edges_uv or \
+                                (orig_edge[1], orig_edge[0]) in nx_edges_uv
             is_not_self_loop = orig_edge[0] != orig_edge[1]
             is_start_self_loop = orig_edge[0] == orig_edge[1] == \
                 nx_route[0] == nx_route[1]
@@ -297,9 +298,10 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # Exception is when it is circular. In that case we want to check
             # for the second to last node as well, in case that's also the same
             nx_edges = list(route_to_gdf(G, nx_route).index)
+            nx_edges_uv = {(u, v) for u, v, key in nx_edges}
             
-            dest_edge_in_nx = dest_edge in nx_edges or \
-                (dest_edge[1], dest_edge[0], dest_edge[2]) in nx_edges
+            dest_edge_in_nx = (dest_edge[0], dest_edge[1]) in nx_edges_uv or \
+                                (dest_edge[1], dest_edge[0]) in nx_edges_uv
             is_not_self_loop = dest_edge[0] != dest_edge[1]
             is_end_self_loop = dest_edge[0] == dest_edge[1] == \
                 nx_route[-1] == nx_route[-2]
