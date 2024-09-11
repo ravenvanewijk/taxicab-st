@@ -255,7 +255,16 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # check overlap with first route edge
             route_orig_edge = get_edge_geometry(G, (nx_route[0], 
                                                 nx_route[1], 0))
-            if orig_edge[0] in nx_route and orig_edge[1] in nx_route:
+            
+            # Remove the first node from nx route if it is already encapsulated
+            # in the final linepiece. We check this by checking what edge the 
+            # first linepiece is made of
+            # Exception is when it is circular. In that case we want to check
+            # for the second node as well, in case that is also the same
+            if (orig_edge[0] in nx_route and orig_edge[1] in nx_route \
+                and not orig_edge[0] == orig_edge[1]) \
+                or \
+                (orig_edge[0] == orig_edge[1] == nx_route[0] == nx_route[1]):
                 nx_route = nx_route[1:]
         
             # determine which origin partial edge to use
@@ -276,7 +285,15 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # check overlap with last route edge
             route_dest_edge = get_edge_geometry(G, (nx_route[-2], 
                                                 nx_route[-1], 0))
-            if dest_edge[0] in nx_route and dest_edge[1] in nx_route:
+            # Remove the last node from nx route if it is already encapsulated
+            # in the final linepiece. We check this by checking what edge the 
+            # last linepiece is made of
+            # Exception is when it is circular. In that case we want to check
+            # for the second to last node as well, in case that's also the same
+            if (dest_edge[0] in nx_route and dest_edge[1] in nx_route \
+                and not dest_edge[0] == dest_edge[1]) \
+                or \
+                (dest_edge[0] == dest_edge[1] == nx_route[-1] == nx_route[-2]):
                 nx_route = nx_route[:-1]
 
             if len(nx_route) > 1:
@@ -314,32 +331,3 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
 
     return route_time, nx_route, orig_partial_edge, \
                                 dest_partial_edge, segment_time
-
-
-import osmnx as ox
-import numpy as np
-import matplotlib.pyplot as plt
-import pandas as pd
-from shapely import Point
-
-
-def plot_graph(G, custs=None, lines=[]):
-    """Plots the graph of the selected gpkg file as well as customer 
-    locations"""
-    # Plot city graph
-    fig, ax = ox.plot_graph(G, show=False, close=False)
-    # Plot the customers
-    if custs is not None:
-        locs_scatter = ax.scatter([point.x for _, point in custs.items()],
-                                        [point.y for _, point in custs.items()],
-                                        c='red', s=30, zorder=10, label='L&R locations')
-        # Show the plot with a legend
-        ax.legend(handles=[locs_scatter])
-
-    for line in lines:
-        x, y = line.xy
-        ax.plot(x, y, marker='o')  # Plot the line with markers at vertices
-        ax.plot(x[-1],y[-1],'rs') 
-
-
-    plt.show()
