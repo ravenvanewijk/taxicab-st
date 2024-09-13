@@ -219,7 +219,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_2
             
-            # nx route has apparantly not selected all correct nodes
+            # nx route has apparently not selected all correct nodes
             # append the route such that there are 3 nodes
             else: 
                 nx_route = nx_shortest_path(G, orig_edge[0], 
@@ -241,10 +241,10 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                                     dist(dest_yx, (G.nodes[dest_node]['y'],
                                         G.nodes[dest_node]['x']))
 
-                if orig_dist_error <= dest_dist_error:
+                if abs(orig_dist_error) <= abs(dest_dist_error):
                     nx_route = [missed_orig_node] + nx_route
 
-                elif dest_dist_error < orig_dist_error:
+                elif abs(dest_dist_error) < abs(orig_dist_error):
                     nx_route = nx_route + [missed_dest_node]            
 
         # when routing across two or more edges
