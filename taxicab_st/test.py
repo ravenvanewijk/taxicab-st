@@ -78,6 +78,7 @@ plot_graph(G, custs, [e, r] + rte)
 
 
 
+
 import osmnx as ox
 import numpy as np
 import matplotlib.pyplot as plt
@@ -110,14 +111,23 @@ def plot_graph(G, custs=None, lines=[]):
 def str_interpret(value):
     return value  # Ensure the value remains a string
 
-G = ox.load_graphml(filepath='taxicab_st/Seattle.graphml',
+G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
                         edge_dtypes={'osmid': str_interpret,
                                     'reversed': str_interpret})
 
 
+# A = np.array([47.687109, -122.120318])
+# B = np.array([47.680838, -122.104114])
 
-A = np.array([47.680838, -122.104114])
-B = np.array([47.682122, -122.10635])
+
+A = np.array([42.875181199999986, -78.861864])
+B = np.array([ 42.856027, -78.867927])
+
+# A = np.array([47.547134, -122.336966])
+# B = np.array([47.538336, -122.295355])
+
+# A = np.array([47.680838, -122.104114])
+# B = np.array([47.682122, -122.10635])
 # B = np.array([47.5665561, -122.3895247])
 # A = np.array([47.625187, -122.352789])
 
@@ -137,15 +147,7 @@ print(w,e,r)
 
 custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
 rte=[]
-# nx_route = [53089055, 53089056, 366732331, 53211210, 53211211, 4274337191, 6030052653, 6030052663, 6030018277, 6246050797, 53052457, 2955405514, 53052436, 30830849, 2939959136, 4549961257, 4549961260, 30830863, 2652866671, 2927137481, 5413301435, 11611747359, 7010447307, 2247309277, 4549993731, 4550007326, 59677236, 10166353276, 31429758, 32103268, 799291217, 4684782653, 59713263, 31429756, 32103800, 9417305222, 30079365, 32172259, 59594313, 31251602, 1726065110, 2776431135, 53224599, 59948458, 53079368, 6388490087, 8305962067, 3659288047, 3659288052, 29972814, 9155674446, 3737956368]
-for ls in route_to_gdf(G, w)['geometry']:
-    rte.append(ls)
-# plot_graph(G, custs, [e] + rte)
-plot_graph(G, custs, [e,r] + rte)
-custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
-rte=[]
 nx_route = [8649685293, 53143742]
 for ls in route_to_gdf(G, w)['geometry']:
     rte.append(ls)
-# plot_graph(G, custs, [e] + rte)
-plot_graph(G, custs, [e, r] + rte)
+plot_graph(G, custs, [e, r ] + rte)

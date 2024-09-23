@@ -180,22 +180,22 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         # If any of these are a line with equal coords, convert to point
         # Will resul in an error if we do not do this     
         try:
-            if orig_partial_edge_1.coords[0] == orig_partial_edge_1.coords[1]: 
+            if orig_partial_edge_1.coords[0] == orig_partial_edge_1.coords[-1]: 
                 orig_partial_edge_1 = Point(orig_partial_edge_1.coords[0])
         except IndexError:
             pass
         try:
-            if orig_partial_edge_2.coords[0] == orig_partial_edge_2.coords[1]: 
+            if orig_partial_edge_2.coords[0] == orig_partial_edge_2.coords[-1]: 
                 orig_partial_edge_2 = Point(orig_partial_edge_2.coords[0])
         except IndexError:
             pass
         try:
-            if dest_partial_edge_1.coords[0] == dest_partial_edge_1.coords[1]: 
+            if dest_partial_edge_1.coords[0] == dest_partial_edge_1.coords[-1]: 
                 dest_partial_edge_1 = Point(dest_partial_edge_1.coords[0])
         except IndexError:
             pass        
         try:
-            if dest_partial_edge_2.coords[0] == dest_partial_edge_2.coords[1]: 
+            if dest_partial_edge_2.coords[0] == dest_partial_edge_2.coords[-1]: 
                 dest_partial_edge_2 = Point(dest_partial_edge_2.coords[0])
         except IndexError:
             pass
