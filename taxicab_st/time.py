@@ -73,7 +73,8 @@ def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
         gdf = route_to_gdf(G, nx_route)
         # Calculate the number of coordinates and travel time per segment
         # Travel time is assumed linear
-        gdf['num_coordinates'] = gdf['geometry'].apply(lambda geom: len(list(geom.coords)) if geom else 2)
+        gdf['num_coordinates'] = gdf['geometry'].apply(lambda geom: 
+                                        len(list(geom.coords)) if geom else 2)
         gdf['travel_time_per_segment'] = gdf['travel_time'] / \
                                         (gdf['num_coordinates'] - 1)
         for idx, row in gdf.iterrows():
@@ -248,7 +249,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                     nx_route = [missed_orig_node] + nx_route
 
                 elif abs(dest_dist_error) < abs(orig_dist_error):
-                    nx_route = nx_route + [missed_dest_node]            
+                    nx_route = nx_route + [missed_dest_node]   
 
         # when routing across two or more edges
         if len(nx_route) >= 3:
@@ -259,14 +260,32 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             route_orig_edge = get_edge_geometry(G, (nx_route[0], 
                                                 nx_route[1], 0))
             
+            # Check whether the edges are connected. 
+            # if we previously added an edge it might not be
+            # this is because of one way streets.
+            # NOT IMPLEMENTED RIGHT NOW AND TODO
+            if (nx_route[0], nx_route[1], 0) in G.edges or \
+                    (nx_route[0], nx_route[1], 1) in G.edges and \
+                (nx_route[-2], nx_route[-1], 0) in G.edges or \
+                    (nx_route[-2], nx_route[-1], 1) in G.edges:
+                nx_edges = list(route_to_gdf(G, nx_route).index)
+            elif (nx_route[0], nx_route[1], 0) not in G.edges and \
+                    (nx_route[0], nx_route[1], 1) not in G.edges:
+                nx_edges = list(route_to_gdf(G, [nx_route[1]] + \
+                                [nx_route[0]]).index) + \
+                        list(route_to_gdf(G, nx_route[1:]).index)
+            else:
+                nx_edges = list(route_to_gdf(G, nx_route[:-1]).index) + \
+                    list(route_to_gdf(G, [nx_route[-1]] + \
+                                [nx_route[-2]]).index)
+
+            nx_edges_uv = {(u, v) for u, v, key in nx_edges}
+
             # Remove the first node from nx route if it is already encapsulated
             # in the final linepiece. We check this by checking what edge the 
             # first linepiece is made of
             # Exception is when it is circular. In that case we want to check
             # for the second node as well, in case that is also the same
-            nx_edges = list(route_to_gdf(G, nx_route).index)
-            nx_edges_uv = {(u, v) for u, v, key in nx_edges}
-
             orig_edge_in_nx = (orig_edge[0], orig_edge[1]) in nx_edges_uv or \
                                 (orig_edge[1], orig_edge[0]) in nx_edges_uv
             is_not_self_loop = orig_edge[0] != orig_edge[1]

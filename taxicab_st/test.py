@@ -126,8 +126,11 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 
 # A = np.array([42.92238771355551, -78.83363366913012])
 # B = np.array([42.92179680000001, -78.8336239])
-A = np.array([42.961694872237025, -78.7593302452336])
-B = np.array([ 42.965185599999984, -78.7593501])
+# A = np.array([42.961694872237025, -78.7593302452336])
+# B = np.array([ 42.965185599999984, -78.7593501])
+
+A = np.array([42.94089282415961, -78.82162294637753])
+B = np.array([ 42.94009299999999, -78.822945])
 
 # A = np.array([47.547134, -122.336966])
 # B = np.array([47.538336, -122.295355])
@@ -150,10 +153,11 @@ B = np.array([ 42.965185599999984, -78.7593501])
 # B = np.array([42.87571, -78.731316])
 q,w,e,r,t= shortest_path(G,A,B)
 print(w,e,r)
-
+# A = (G.nodes[111440824]['y'], G.nodes[111440824]['x'])
+# B = (G.nodes[111390208]['y'], G.nodes[111390208]['x'])
 custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
 rte=[]
 nx_route = [8649685293, 53143742]
 # for ls in route_to_gdf(G, w)['geometry']:
 #     rte.append(ls)
-plot_graph(G, custs, [e,r ])
+plot_graph(G, custs , rte + [e,r])
