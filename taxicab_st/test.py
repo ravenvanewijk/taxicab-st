@@ -79,6 +79,7 @@ plot_graph(G, custs, [e, r] + rte)
 
 
 
+
 import osmnx as ox
 import numpy as np
 import matplotlib.pyplot as plt
@@ -120,8 +121,13 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 # B = np.array([47.680838, -122.104114])
 
 
-A = np.array([42.875181199999986, -78.861864])
-B = np.array([ 42.856027, -78.867927])
+# A = np.array([42.875181199999986, -78.861864])
+# B = np.array([ 42.856027, -78.867927])
+
+# A = np.array([42.92238771355551, -78.83363366913012])
+# B = np.array([42.92179680000001, -78.8336239])
+A = np.array([42.961694872237025, -78.7593302452336])
+B = np.array([ 42.965185599999984, -78.7593501])
 
 # A = np.array([47.547134, -122.336966])
 # B = np.array([47.538336, -122.295355])
@@ -148,6 +154,6 @@ print(w,e,r)
 custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
 rte=[]
 nx_route = [8649685293, 53143742]
-for ls in route_to_gdf(G, w)['geometry']:
-    rte.append(ls)
-plot_graph(G, custs, [e, r ] + rte)
+# for ls in route_to_gdf(G, w)['geometry']:
+#     rte.append(ls)
+plot_graph(G, custs, [e,r ])
