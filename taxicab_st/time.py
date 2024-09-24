@@ -32,9 +32,6 @@ def compute_linestring_time(ls, def_spd=30, def_unit='mph'):
         return time
     else: return None
 
-def round_coords(coords, decimal_places=6):
-    return tuple(round(coord, decimal_places) for coord in coords)
-
 def v2ms(value, unit):
     """
     Convert a value given in mph, kph, or kts to meters per second (m/s).
@@ -179,11 +176,6 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         orig_partial_edge_2 = substring(orig_geo, 0, orig_clip, normalized=True)
         dest_partial_edge_1 = substring(dest_geo, dest_clip, 1, normalized=True)
         dest_partial_edge_2 = substring(dest_geo, 0, dest_clip, normalized=True)   
-
-        orig_partial_edge_1 = LineString([round_coords(coord) for coord in orig_partial_edge_1.coords])
-        orig_partial_edge_2 = LineString([round_coords(coord) for coord in orig_partial_edge_2.coords])
-        dest_partial_edge_1 = LineString([round_coords(coord) for coord in dest_partial_edge_1.coords])
-        dest_partial_edge_2 = LineString([round_coords(coord) for coord in dest_partial_edge_2.coords])
         # If any of these are a line with equal coords, convert to point
         # Will resul in an error if we do not do this     
         try:
