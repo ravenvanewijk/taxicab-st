@@ -357,12 +357,18 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         if orig_partial_edge:
             if len(orig_partial_edge.coords) <= 1:
                 orig_partial_edge = []
+            elif len(orig_partial_edge.coords) == 2 and \
+                orig_partial_edge.coords[0] == orig_partial_edge.coords[-1]:
+                orig_partial_edge = []
     except UnboundLocalError:
         orig_partial_edge = []
 
     try:
         if dest_partial_edge:
             if len(dest_partial_edge.coords) <= 1:
+                dest_partial_edge = []
+            elif len(dest_partial_edge.coords) == 2 and \
+                dest_partial_edge.coords[0] == dest_partial_edge.coords[-1]:
                 dest_partial_edge = []
     except UnboundLocalError:
         dest_partial_edge = []
