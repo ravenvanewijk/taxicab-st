@@ -32,6 +32,12 @@ def compute_linestring_time(ls, def_spd=30, def_unit='mph'):
         return time
     else: return None
 
+def edges_match(edge1, edge2):
+    return (edge1.coords[0] == edge2.coords[0] or
+            edge1.coords[0] == edge2.coords[-1] or
+            edge1.coords[-1] == edge2.coords[0] or
+            edge1.coords[-1] == edge2.coords[-1])
+
 def v2ms(value, unit):
     """
     Convert a value given in mph, kph, or kts to meters per second (m/s).
@@ -207,19 +213,19 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         # when the nx route is just a single node, this is a bit of an edge case
         if len(nx_route) <= 2:
             nx_route = []
-            if orig_partial_edge_1.intersects(dest_partial_edge_1):
+            if edges_match(orig_partial_edge_1, dest_partial_edge_1):
                 orig_partial_edge = orig_partial_edge_1
                 dest_partial_edge = dest_partial_edge_1
-                
-            elif orig_partial_edge_1.intersects(dest_partial_edge_2):
+
+            elif edges_match(orig_partial_edge_1, dest_partial_edge_2):
                 orig_partial_edge = orig_partial_edge_1
                 dest_partial_edge = dest_partial_edge_2
-                
-            elif orig_partial_edge_2.intersects(dest_partial_edge_1):
+
+            elif edges_match(orig_partial_edge_2, dest_partial_edge_1):
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_1
-                
-            elif orig_partial_edge_2.intersects(dest_partial_edge_2):
+
+            elif edges_match(orig_partial_edge_2, dest_partial_edge_2):
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_2
             
