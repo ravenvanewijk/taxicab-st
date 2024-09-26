@@ -172,6 +172,17 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
     else:
         nx_route = nx_shortest_path(G, orig_edge[0], 
                                     dest_edge[0], 'travel_time')
+        # Very rarely a different orig edge or final edge is chosen by taxicab
+        # Than the one selected by nx
+        # We want to adjust this here if this is the case
+        if len(nx_route) >= 2 and orig_edge[0] == nx_route[0] and \
+            orig_edge[1] != nx_route[1] and orig_edge[1] in nx_route:
+            orig_edge = tuple(map(int, route_to_gdf(G, nx_route[:2]).index[0]))
+        
+        if len(nx_route) >= 2 and dest_edge[0] == nx_route[-1] and \
+            dest_edge[1] != nx_route[-2] and dest_edge[1] in nx_route:
+            dest_edge = tuple(map(int, route_to_gdf(G, nx_route[-2:]).index[0]))
+
         p_o, p_d = Point(orig_yx[::-1]), Point(dest_yx[::-1])
         orig_geo = get_edge_geometry(G, orig_edge)
         dest_geo = get_edge_geometry(G, dest_edge)
@@ -379,3 +390,4 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
 
     return route_time, nx_route, orig_partial_edge, \
                                 dest_partial_edge, segment_time
+
