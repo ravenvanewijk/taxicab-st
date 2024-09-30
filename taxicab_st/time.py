@@ -322,7 +322,16 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                 or orig_partial_edge_1.coords[-1] == route_orig_edge.coords[0]\
                 or orig_partial_edge_1.coords[0] == route_orig_edge.coords[-1]\
                 or orig_partial_edge_1.coords[-1] == route_orig_edge.coords[-1]:
-                orig_partial_edge = orig_partial_edge_1
+                # Additional check: if its just a point and it matches, we want
+                # the other partial edge.
+                if type(orig_partial_edge_2) == Point and \
+                    (orig_partial_edge_2.coords[0] == \
+                                            route_orig_edge.coords[0]\
+                    or orig_partial_edge_2.coords[0] == \
+                                            route_orig_edge.coords[-1]):
+                    orig_partial_edge = orig_partial_edge_2
+                else:
+                    orig_partial_edge = orig_partial_edge_1
             else:
                 orig_partial_edge = orig_partial_edge_2
 
@@ -359,7 +368,14 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                 or dest_partial_edge_1.coords[-1] == route_dest_edge.coords[0]\
                 or dest_partial_edge_1.coords[0] == route_dest_edge.coords[-1]\
                 or dest_partial_edge_1.coords[-1] == route_dest_edge.coords[-1]:
-                dest_partial_edge = dest_partial_edge_1
+                if type(dest_partial_edge_2) == Point and \
+                    (dest_partial_edge_2.coords[0] == \
+                                            route_dest_edge.coords[0]\
+                    or dest_partial_edge_2.coords[0] == \
+                                            route_dest_edge.coords[-1]):
+                    dest_partial_edge = dest_partial_edge_2
+                else:
+                    dest_partial_edge = dest_partial_edge_1
             else:
                 dest_partial_edge = dest_partial_edge_2
             
