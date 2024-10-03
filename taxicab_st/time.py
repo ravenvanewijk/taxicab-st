@@ -175,12 +175,17 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
         # Very rarely a different orig edge or final edge is chosen by taxicab
         # Than the one selected by nx
         # We want to adjust this here if this is the case
+        # this only occurs if its also the final part of the route
         if len(nx_route) >= 2 and orig_edge[0] == nx_route[0] and \
-            orig_edge[1] != nx_route[1] and orig_edge[1] in nx_route:
+            orig_edge[1] != nx_route[1] and orig_edge[1] in nx_route and \
+            orig_yx[0] == G.nodes[nx_route[0]]['y'] and \
+            orig_yx[1] == G.nodes[nx_route[0]]['x']:
             orig_edge = tuple(map(int, route_to_gdf(G, nx_route[:2]).index[0]))
         
         if len(nx_route) >= 2 and dest_edge[0] == nx_route[-1] and \
-            dest_edge[1] != nx_route[-2] and dest_edge[1] in nx_route:
+            dest_edge[1] != nx_route[-2] and dest_edge[1] in nx_route and \
+            dest_yx[0] == G.nodes[nx_route[-1]]['y'] and \
+            dest_yx[1] == G.nodes[nx_route[-1]]['x']:
             dest_edge = tuple(map(int, route_to_gdf(G, nx_route[-2:]).index[0]))
 
         p_o, p_d = Point(orig_yx[::-1]), Point(dest_yx[::-1])
