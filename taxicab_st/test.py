@@ -82,7 +82,6 @@ plot_graph(G, custs, [e, r] + rte)
 
 
 
-
 import osmnx as ox
 import numpy as np
 import matplotlib.pyplot as plt
@@ -162,8 +161,16 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 # A = np.array([47.638784, -122.203969])
 # B = np.array([47.656661, -122.30764])
 
+# below is error due to removing edge unnecessarily
 A = np.array([ 42.995467, -78.81462])
 B = np.array([42.98816 , -78.822566])
+
+# below gives not connected error 2x
+# A = np.array([ 42.959665588770186, -78.76380033011569])
+# B = np.array([42.959674699999994, -78.7635801])
+# A = np.array([ 42.92011654552182, -78.89254777293446])
+# B = np.array([42.9201281, -78.8916306])
+
 # A = np.array([42.8876712, -78.7677336])
 # B = np.array([ 42.86671 , -78.801124])
 # # A = np.array([42.88189546413181, -78.74404160878684])
@@ -180,7 +187,7 @@ for ls in route_to_gdf(G, w)['geometry']:
     rte.append(ls)
 plot_graph(G, custs , [e, r]+ rte )
 
-# nx_route = [10981427328, 111318882, 111365073, 111365070, 633546952, 633547010, 633547003, 633546950]
+# nx_route = [1214320545, 301022640, 111581657, 111275949, 111303050, 1214320684, 301025662, 264585683, 301025695, 301025723]
 # rte= []
 # for ls in route_to_gdf(G, nx_route)['geometry']:
 #     rte.append(ls)
