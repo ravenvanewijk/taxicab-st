@@ -188,10 +188,10 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             dest_yx[1] == G.nodes[nx_route[-1]]['x']:
             dest_edge = tuple(map(int, route_to_gdf(G, nx_route[-2:]).index[0]))
         
-        if ((nx_route[0] == dest_edge[0] or nx_route[0] == dest_edge[1]) and \
-            (nx_route[-1] == dest_edge[0] or nx_route[-1]== dest_edge[1])) or \
-            ((nx_route[0] == orig_edge[0] or nx_route[0] == orig_edge[1]) and \
-            (nx_route[-1] == orig_edge[0] or nx_route[-1]== orig_edge[1]))    :
+        if (nx_route[0] in {dest_edge[0], dest_edge[1], 
+                                    orig_edge[0], orig_edge[1]} and
+                nx_route[-1] in {dest_edge[0], 
+                                    dest_edge[1], orig_edge[0], orig_edge[1]}):
             # Begin/ final route is sufficient, bypass nx routing
             nx_route = []
 
