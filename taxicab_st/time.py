@@ -308,13 +308,21 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
                 nx_edges = list(route_to_gdf(G, nx_route).index)
             elif (nx_route[0], nx_route[1], 0) not in G.edges and \
                     (nx_route[0], nx_route[1], 1) not in G.edges:
-                nx_edges = list(route_to_gdf(G, [nx_route[1]] + \
-                                [nx_route[0]]).index) + \
-                        list(route_to_gdf(G, nx_route[1:]).index)
+                try:
+                    nx_edges = list(route_to_gdf(G, [nx_route[1]] + \
+                                    [nx_route[0]]).index) + \
+                            list(route_to_gdf(G, nx_route[1:]).index)
+                except:
+                    raise Exception("Edge does not exist. Routing coordinates: " +
+                                    f"{orig_yx}, {dest_yx}")
             else:
-                nx_edges = list(route_to_gdf(G, nx_route[:-1]).index) + \
-                    list(route_to_gdf(G, [nx_route[-1]] + \
-                                [nx_route[-2]]).index)
+                try:
+                    nx_edges = list(route_to_gdf(G, nx_route[:-1]).index) + \
+                        list(route_to_gdf(G, [nx_route[-1]] + \
+                                    [nx_route[-2]]).index)
+                except:
+                    raise Exception("Edge does not exist. Routing coordinates: " +
+                                    f"{orig_yx}, {dest_yx}")
 
             nx_edges_uv = {(u, v) for u, v, key in nx_edges}
 
