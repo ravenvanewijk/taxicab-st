@@ -178,8 +178,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             dest_node = dest_edge[1]
         else:
             dest_node = dest_edge[0]
-        nx_route = nx_shortest_path(G, orig_node, 
-                                    dest_node, 'travel_time')
+        nx_route = nx_shortest_path(G, orig_node, dest_node, 'travel_time')
         # Very rarely a different orig edge or final edge is chosen by taxicab
         # Than the one selected by nx
         # We want to adjust this here if this is the case
@@ -265,8 +264,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # nx route has apparently not selected all correct nodes
             # append the route such that there are 3 nodes
             else: 
-                nx_route = nx_shortest_path(G, orig_edge[0], 
-                                            dest_edge[0], 'travel_time')
+                nx_route = nx_shortest_path(G, orig_node, dest_node, 'travel_time')
                 missed_orig_node, orig_node = (orig_edge[0], orig_edge[1]) \
                                     if orig_edge[1] in nx_route else \
                                             (orig_edge[1], orig_edge[0])
