@@ -10,6 +10,8 @@ from osmnx.routing import route_to_gdf
 
 from math import dist
 
+import numpy as np
+
 def compute_linestring_time(ls, def_spd=30, def_unit='mph'):
     '''
     Computes the length of a partial edge (shapely linesting)
