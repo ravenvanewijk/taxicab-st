@@ -167,10 +167,13 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 # B = np.array([42.98816 , -78.822566])
 
 # below gives not connected error 2x
-A = np.array([ 42.959665588770186, -78.76380033011569])
-B = np.array([42.959674699999994, -78.7635801])
+# A = np.array([ 42.959665588770186, -78.76380033011569])
+# B = np.array([42.959674699999994, -78.7635801])
 # A = np.array([ 42.92011654552182, -78.89254777293446])
 # B = np.array([42.9201281, -78.8916306])
+
+A = np.array([ 42.95915105373447, -78.76622741568868])
+B = np.array([42.959674699999994, -78.7635801])
 
 # A = np.array([42.8876712, -78.7677336])
 # B = np.array([ 42.86671 , -78.801124])
@@ -184,11 +187,11 @@ print(w,e,r)
 # # B = (G.nodes[111390208]['y'], G.nodes[111390208]['x'])
 custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
 rte=[]
-# for ls in route_to_gdf(G, w)['geometry']:
-#     rte.append(ls)
+for ls in route_to_gdf(G, w)['geometry']:
+    rte.append(ls)
 plot_graph(G, custs , [e]+ rte )
 
-# nx_route = [1214320545, 301022640, 111581657, 111275949, 111303050, 1214320684, 301025662, 264585683, 301025695, 301025723]
+# nx_route = [301025723, 301022640]
 # rte= []
 # for ls in route_to_gdf(G, nx_route)['geometry']:
 #     rte.append(ls)

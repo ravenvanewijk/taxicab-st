@@ -70,6 +70,17 @@ def v2ms(value, unit):
 def count_coordinates(geometry):
     return len(list(geometry.coords))
 
+def get_decimal_places(value):
+    # Convert the number to string without adding extra precision
+    str_val = str(value)
+    
+    # Check if there is a decimal point in the number
+    if '.' in str_val:
+        # Return the number of digits after the decimal point
+        return len(str_val.split('.')[1])
+    else:
+        return 0  # If no decimal part, return 0
+
 def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
     '''
     Computes the route complete taxi route length
@@ -170,11 +181,18 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
     
     # routing across multiple edges
     else:
-        if tuple(orig_yx) == (G.nodes[orig_edge[1]]['y'], G.nodes[orig_edge[1]]['x']):
+        # Check whether start or destination matches exactly with a node
+        # If so we want nx_route to route to that node
+        n_digits_graph = get_decimal_places(G.nodes[dest_edge[0]]['y'])
+        if tuple(orig_yx) == (G.nodes[orig_edge[1]]['y'], G.nodes[orig_edge[1]]['x']) or \
+            np.all(tuple(np.round(orig_yx, decimals=n_digits_graph) == \
+                            (G.nodes[orig_edge[1]]['y'], G.nodes[orig_edge[1]]['x']))):
             orig_node = orig_edge[1]
         else:
             orig_node = orig_edge[0]
-        if tuple(dest_yx) == (G.nodes[dest_edge[1]]['y'], G.nodes[dest_edge[1]]['x']):
+        if tuple(dest_yx) == (G.nodes[dest_edge[1]]['y'], G.nodes[dest_edge[1]]['x']) or \
+            np.all(tuple(np.round(dest_yx, decimals=n_digits_graph) == \
+                            (G.nodes[dest_edge[1]]['y'], G.nodes[dest_edge[1]]['x']))):
             dest_node = dest_edge[1]
         else:
             dest_node = dest_edge[0]
