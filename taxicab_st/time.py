@@ -2,7 +2,7 @@ from networkx import shortest_path as nx_shortest_path
 
 from shapely.geometry import Point
 from shapely.geometry import LineString
-from shapely.ops import substring
+from shapely.ops import substring, linemerge
 
 from osmnx.distance import nearest_edges
 from osmnx.distance import great_circle
@@ -101,9 +101,11 @@ def compute_taxi_time(G, nx_route, orig_partial_edge, dest_partial_edge):
             timelst.extend([row['travel_time_per_segment']] * \
                             (row['num_coordinates'] - 1))
     if orig_partial_edge:
+        orig_partial_edge = linemerge([orig_partial_edge])
         timelst = [float(compute_linestring_time(orig_partial_edge))] * \
                     (len(orig_partial_edge.coords) - 1) + timelst
     if dest_partial_edge:
+        dest_partial_edge = linemerge([dest_partial_edge])
         timelst = timelst + \
                 [float(compute_linestring_time(dest_partial_edge))] * \
                     (len(dest_partial_edge.coords) - 1)

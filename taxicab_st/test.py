@@ -82,6 +82,7 @@ plot_graph(G, custs, [e, r] + rte)
 
 
 
+
 import osmnx as ox
 import numpy as np
 import matplotlib.pyplot as plt
@@ -172,8 +173,12 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 # A = np.array([ 42.92011654552182, -78.89254777293446])
 # B = np.array([42.9201281, -78.8916306])
 
-A = np.array([ 42.95915105373447, -78.76622741568868])
-B = np.array([42.959674699999994, -78.7635801])
+# A = np.array([ 42.95915105373447, -78.76622741568868])
+# B = np.array([42.959674699999994, -78.7635801])
+
+A = np.array([42.875181199999986, -78.861864])
+B = np.array([ 42.856027, -78.867927])
+
 
 # A = np.array([42.8876712, -78.7677336])
 # B = np.array([ 42.86671 , -78.801124])
