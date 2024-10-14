@@ -176,9 +176,12 @@ G = ox.load_graphml(filepath='taxicab_st/Buffalo.graphml',
 # A = np.array([ 42.95915105373447, -78.76622741568868])
 # B = np.array([42.959674699999994, -78.7635801])
 
-A = np.array([42.875181199999986, -78.861864])
-B = np.array([ 42.856027, -78.867927])
+# A = np.array([42.875181199999986, -78.861864])
+# B = np.array([ 42.856027, -78.867927])
 
+
+A = np.array([42.92424629999999, -78.8723976])
+B = np.array([42.92425309999999, -78.8717244])
 
 # A = np.array([42.8876712, -78.7677336])
 # B = np.array([ 42.86671 , -78.801124])
@@ -194,9 +197,9 @@ custs = pd.Series([Point(A[1], A[0]), Point(B[1], B[0])])
 rte=[]
 for ls in route_to_gdf(G, w)['geometry']:
     rte.append(ls)
-plot_graph(G, custs , [e]+ rte )
+plot_graph(G, custs , rte )
 
-# nx_route = [301025723, 301022640]
+# nx_route = [929254122, 3035952654]
 # rte= []
 # for ls in route_to_gdf(G, nx_route)['geometry']:
 #     rte.append(ls)

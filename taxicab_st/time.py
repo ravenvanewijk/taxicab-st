@@ -266,23 +266,36 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
 
         # when the nx route is just a single node, this is a bit of an edge case
         if len(nx_route) <= 2:
-            nx_route = []
             if edges_match(orig_partial_edge_1, dest_partial_edge_1):
+                nx_route = []
                 orig_partial_edge = orig_partial_edge_1
                 dest_partial_edge = dest_partial_edge_1
 
             elif edges_match(orig_partial_edge_1, dest_partial_edge_2):
+                nx_route = []
                 orig_partial_edge = orig_partial_edge_1
                 dest_partial_edge = dest_partial_edge_2
 
             elif edges_match(orig_partial_edge_2, dest_partial_edge_1):
+                nx_route = []
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_1
 
             elif edges_match(orig_partial_edge_2, dest_partial_edge_2):
+                nx_route = []
                 orig_partial_edge = orig_partial_edge_2
                 dest_partial_edge = dest_partial_edge_2
             
+            elif tuple(orig_yx) == (G.nodes[nx_route[0]]['y'], 
+                                    G.nodes[nx_route[0]]['x']) or \
+                    np.all(tuple(np.round(orig_yx, decimals=n_digits_graph) == \
+                    (G.nodes[nx_route[0]]['y'], G.nodes[nx_route[0]]['x']))) and \
+                    tuple(dest_yx) == (G.nodes[nx_route[-1]]['y'], 
+                                    G.nodes[nx_route[-1]]['x']) or \
+                    np.all(tuple(np.round(dest_yx, decimals=n_digits_graph) == \
+                    (G.nodes[nx_route[-1]]['y'], G.nodes[nx_route[-1]]['x']))):
+                orig_partial_edge = []
+                dest_partial_edge = []
             # nx route has apparently not selected all correct nodes
             # append the route such that there are 3 nodes
             else: 
@@ -323,10 +336,10 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             # if we previously added an edge it might not be
             # this is because of one way streets.
             # NOT IMPLEMENTED RIGHT NOW AND TODO
-            if (nx_route[0], nx_route[1], 0) in G.edges or \
-                    (nx_route[0], nx_route[1], 1) in G.edges and \
-                (nx_route[-2], nx_route[-1], 0) in G.edges or \
-                    (nx_route[-2], nx_route[-1], 1) in G.edges:
+            if ((nx_route[0], nx_route[1], 0) in G.edges or \
+                    (nx_route[0], nx_route[1], 1) in G.edges) and \
+                ((nx_route[-2], nx_route[-1], 0) in G.edges or \
+                    (nx_route[-2], nx_route[-1], 1)) in G.edges:
                 nx_edges = list(route_to_gdf(G, nx_route).index)
             elif (nx_route[0], nx_route[1], 0) not in G.edges and \
                     (nx_route[0], nx_route[1], 1) not in G.edges:
