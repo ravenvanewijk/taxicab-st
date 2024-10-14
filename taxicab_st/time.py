@@ -339,7 +339,7 @@ def shortest_path(G, orig_yx, dest_yx, orig_edge=None, dest_edge=None):
             if ((nx_route[0], nx_route[1], 0) in G.edges or \
                     (nx_route[0], nx_route[1], 1) in G.edges) and \
                 ((nx_route[-2], nx_route[-1], 0) in G.edges or \
-                    (nx_route[-2], nx_route[-1], 1)) in G.edges:
+                    (nx_route[-2], nx_route[-1], 1) in G.edges):
                 nx_edges = list(route_to_gdf(G, nx_route).index)
             elif (nx_route[0], nx_route[1], 0) not in G.edges and \
                     (nx_route[0], nx_route[1], 1) not in G.edges:
